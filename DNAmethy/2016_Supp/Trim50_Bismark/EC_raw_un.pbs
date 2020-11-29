@@ -1,0 +1,9 @@
+#!/bin/bash
+#PBS -N EC_Bismark_un
+#PBS -l nodes=1:ppn=16
+#PBS -o ECun.out
+#PBS -e ECun.err
+#PBS -l walltime=240:0:0
+#PBS -q batch
+cd /public/home/jyli/DNA_methy/2016_Supp/Trim50_Bismark
+bismark /public/home/jyli/Public_data/TM-1_Genome/DNA_methy/ --bowtie2 --non_directional -N 1 -L 30 -p 4 ../CleanData/EC_un.clean_merge.fastq.gz -o EC_Bismark_un

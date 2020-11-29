@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N bowtie2
+#PBS -l nodes=1:ppn=15
+#PBS -o bowtie.out
+#PBS -e bowtie.err
+#PBS -q batch
+#PBS -l walltime=100:0:0
+cd /public/home/jyli/CHIPSEQ/Y668_H3K9me2/Clean
+for ID in NECK9 ECIN ECK9 EIN EK9
+do
+bowtie2 -p 15 -x /public/home/jyli/Public_data/TM-1_Genome/tm_1 -1 ${ID}_1.clean.fastq.gz -2 ${ID}_2.clean.fastq.gz -S ./BOWTIE2/${ID}_paired.sam
+cd ./BOWTIE2/
+samtools view -b -S ${ID}_paired.sam > ${ID}_paired.bam
+samtools sort ${ID}_paired.bam ${ID}_paired.sort
+samtools rmdup ${ID}_paired.sort.bam ${ID}_paired.sort_rmdup.bam
+samtools view -bh -q 20 ${ID}_paired.sort.rmdup.bam >${ID}_paired.sort.rmdup_uniq20.bam
+bedtools coverage -abam ./${ID}_paired.sort.rmdup_uniq20.bam -b /public/home/jyli/CHIPSEQ/Y668_H3K9me2/Clean/Bowtie_sortBam/Chr.100KB.sildingwidow1KB.txt > ${ID}.count
+done

@@ -1,0 +1,35 @@
+=================================================cufflinks============================================================================cufflinks -p 8 -G Gb.final.all.gene.model.v5.gff3 -b GbV1.fasta -u -o sample1_Gb_expression Sample1_Gb_mapping/accepted_hits.bam &
+=================================================cuffmerge============================================================================echo ./Sample1_Gb_expression/transcripts.gtf>assemblies1.txt
+echo ./sample2_Gb_expression/transcripts.gtf>>assemblies1.txt
+echo ./sample5_Gb_expression/transcripts.gtf>>assemblies1.txt
+echo ./sample6_Gb_expression/transcripts.gtf>>assemblies1.txt
+
+cuffmerge -p 8 -g Gb.final.all.gene.model.v5.gff3 -s GbV1.fasta -o merge_asm12_56 assemblies1.txt &
+=================================================cuffdiff============================================================================
+                                             ===no rep====
+cuffdiff -o diff1-9_out -b GbV1.fasta -p 8 -L C1,C3 -u merge_asm1_9/merged.gtf C1_R1_H1_Gb_mapping/accepted_hits.bam C3_R1_H9_Gb_mapping/accepted_hits.bam &
+                                            ====rep=====
+cuffdiff -o diff12-56_out -b GbV1.fasta -p 8 -L C1,C2, -u merge_asm12-56.out/merged.gtf C1_R1_S1_Gb_mapping/accepted_hits.bam,C1_R2_S2_Gb_mapping/accepted_hits.bam C2_R1_S5_Gb_mapping/accepted_hits.bam,C2_R2_S6_Gb_mapping/accepted_hits.bam & 
+
+=================================================gfold===============================================================================
+
+nohup samtools view ../C1_R1_S1_Gb_mapping/accepted_hits.bam | gfold count -ann ../Gb.final.all.gene.model.v5.gff3 -tag stdin -o sampl
+e1.read_cnt &
+nohup gfold diff -s1 sample1,sample2 -s2 sample9 -suf .read_cnt -o 12VS9.diff &
+nohup gfold diff -s1 sample1 -s9 sample9 -suf .read_cnt -o sample1VSsample9.diff &
+nohup gfold diff -s1 sample3,sample4 -s2 sample7,sample8 -suf .read_cnt -o 34VS78.diff &
+=====================================================================================================================================
+==================================================sailfish(RPKM)======================================================================
+/data02/guest/JianyingLi/sailfish
+==================index==============
+sailfish index -p 15 -t Graimondii_221_transcript_primaryOnly.fa -o ./ -k 20 >log 2>errlog &
+=================quant===============
+/home/genome/biosoft/Sailfish-0.6.3-Linux_x86-64/bin/sailfish quant -i ./ -l "T=PE:O=><:S=SA" -1 ../ZLZ/Sample_ZLZ1/Sample1_Clean/S1_R
+1.fastq -2 ../ZLZ/Sample_ZLZ1/Sample1_Clean/S1_R2.fastq -o S1_mapping_Gr -p 15 -a > err > errlogGr &
+========================================================================================================================================================================================DESeq===============================================================================
+/home/genome/ljy/Rscript/my_DESeq 
+cluster.R
+MDS.R 
+
+
+

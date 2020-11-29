@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -N SRA
+#PBS -l nodes=1:ppn=1
+#PBS -o o.out
+#PBS -e e.out
+#PBS -l walltime=240:0:0
+#PBS -q batch
+cd /public/home/jyli/NCBI_SRA/NJAU_TM-1-RNAseq 
+for file in `ls *.sra`
+do
+/public/home/cotton/software/sratoolkit.2.4.3/bin/fastq-dump.2.4.3 $file --split-3 -O ./Raw_reads
+done
+exit

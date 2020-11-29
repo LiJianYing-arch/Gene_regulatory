@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -N T61
+#PBS -l nodes=1:ppn=1
+#PBS -o Trim.out
+#PBS -e Trim.err
+#PBS -q batch
+#PBS -l walltime=100:0:0
+cd /public/home/jyli/NCBI_SRA/NJAU_TM-1-RNAseq/clean
+ID=SRR1695161
+java -jar /public/home/cotton/software/Trimmomatic/trimmomatic-0.32.jar PE -threads 1 -phred33 -trimlog ${ID}_trim.log ../Raw_reads/${ID}_1.fastq ../Raw_reads/${ID}_2.fastq ./${ID}_1.clean.fastq ./${ID}_1.unpaired.fastq ./${ID}_2.clean.fastq ./${ID}_2.unpaired.fastq ILLUMINACLIP:/public/home/cotton/software/Trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 LEADING:5 TRAILING:5 SLIDINGWINDOW:4:20 MINLEN:50
+rm -f ${ID}_1.unpaired.fastq ${ID}_2.unpaired.fastq ${ID}_trim.log

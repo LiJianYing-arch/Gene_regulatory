@@ -1,0 +1,1 @@
+/public/home/jyli/anaconda2/bin/macs14 -t /public/home/jyli/CHIPSEQ/Y668_H3K9me2/Clean/Bowtie_sortBam/EK9.sort.bam -c /public/home/jyli/CHIPSEQ/Y668_H3K9me2/Clean/Bowtie_sortBam/EIN.sort.bam -f BAM -g 2.6e9 -n E --tsize=36 --nomodel --shiftsize=73 -p 0.001 

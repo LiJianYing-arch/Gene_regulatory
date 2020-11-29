@@ -1,0 +1,28 @@
+#!/bin/bash
+#PBS -N tmp
+#PBS -l nodes=1:ppn=1
+#PBS -o o.out
+#PBS -e e.out
+#PBS -l walltime=240:0:0
+#PBS -q batch
+cd $PBS_O_WORKDIR
+#--------------------------Trim reads----------------------------
+for file in `ls *.fastq`
+do
+java -jar /public/home/cotton/software/Trimmomatic/trimmomatic-0.32.jar SE -threads 1 -phred33 $file $file.fq ILLUMINACLIP:sRNA.fa:2:30:10 LEADING:10 TRAILING:10 SLIDINGWINDOW:1:10 MINLEN:16
+
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -se $file.fq 5 5 -l 18 -s 20 -t 2
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/Trimming/AmbiguityFiltering.pl -i IlluQC_Filtered_files/$file.fq_filtered -c 0 -o $file_reads.fq
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/Format-converter/FastqToFasta.pl -i $file_reads.fq -o $file_reads.fa
+awk 'BEGIN {OFS = "\n"} {header = $0 ; getline seq ; if (length(seq) <=26 ) {print header, seq}}' $file_reads.fa >$file.clean.fa
+perl collapse_reads.pl $file.clean.fa >$file.uniq.fa 
+perl seq.len.pl $file.uniq.fa
+rm -fr $file_reads.fq $file_reads.fa $file.fq 
+#-----------------------Trim trRNA snoRNA-----------------
+blastall -p blastn -i $file.uniq.fa -d /public/home/jyli/Public_data/trRNA/All_tRNArRNAsnRNA.fa -o $file_vs_trRNAsnRNAsnoRNA.out -e 1e-3 -a 15 -v 1 -b 1
+php ~/script/miRNA-scripts/blast.sta.simple.php  $file_vs_trRNAsnRNAsnoRNA.out
+grep 'NoHits' $file_vs_trRNAsnRNAsnoRNA.out.sta| awk '{print $2}' >$file_notrRNA.id
+perl ~/scripts/getSeq_hash.pl -i $file_notrRNA.id -f $file -o $file_notrRNA.fa
+rm -f $file_vs_trRNAsnRNAsnoRNA.out $file_vs_trRNAsnRNAsnoRNA.out.sta $file_notrRNA.id
+done
+exit

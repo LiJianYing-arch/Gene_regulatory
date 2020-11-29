@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -N SRR2032485
+#PBS -l nodes=1:ppn=1
+#PBS -q batch
+#PBS -l walltime=250:00:00
+echo "Start at"
+date
+cd $PBS_O_WORKDIR
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xaa > xaa.miRcheck_txt 2> err.xaa.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xab > xab.miRcheck_txt 2> err.xab.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xac > xac.miRcheck_txt 2> err.xac.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xad > xad.miRcheck_txt 2> err.xad.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xae > xae.miRcheck_txt 2> err.xae.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xaf > xaf.miRcheck_txt 2> err.xaf.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xag > xag.miRcheck_txt 2> err.xag.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xah > xah.miRcheck_txt 2> err.xah.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xai > xai.miRcheck_txt 2> err.xai.miRcheck_txt &
+nohup perl /public/home/cotton/software/miRcheck/miRcheck_scripts/test_mircheck.pl xaj > xaj.miRcheck_txt 2> err.xaj.miRcheck_txt
+exit 0
+echo "End at:"
+date

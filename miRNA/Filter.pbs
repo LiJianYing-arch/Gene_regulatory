@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N L4
+#PBS -l nodes=1:ppn=5
+#PBS -o L4.out
+#PBS -e L4.err
+#PBS -l walltime=240:0:0
+#PBS -q batch
+echo "Start at"
+date
+cd $PBS_O_WORKDIR
+for file in HR0-3 HR24-3 ZS0-3 ZS24-3
+do
+gunzip ${file}.fq.gz
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -se ${file}.fq 5 5 -l 18 -s 20 -t 2 -o ${file}_IlluQC
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/Trimming/AmbiguityFiltering.pl -i ${file}_IlluQC/*filtered -c 0 -o ${file}_reads.fq
+perl /public/home/cotton/software/NGSQCToolkit_v2.3.3/Format-converter/FastqToFasta.pl -i ${file}_reads.fq -o ${file}_reads.fa
+awk 'BEGIN {OFS = "\n"} {header = $0 ; getline seq ; if (length(seq) <=26 && length(seq)>=18) {print header, seq}}' ${file}_reads.fa >${file}_clean.clean.fa
+perl /public/home/jyli/scripts/miRNA-scripts/collapse_reads.pl ${file}_clean.clean.fa >${file}_reads.clean.md.fa
+blastall -p blastn -i ${file}_reads.clean.md.fa -d /public/home/jyli/Public_data/miRNA_data/Rfam/Rfam.fasta -e 0.001 -b 5 -v 5 -o ${file}_ncRNA.out
+php /public/home/jyli/scripts/blast.sta.simple.php ${file}_ncRNA.out
+grep  'NoHits' ${file}_ncRNA.out.sta |cut -f2 >${file}.id
+perl /public/home/jyli/scripts/getSeq_hash.pl -i ${file}.id -f ${file}_reads.clean.md.fa -o ${file}.ncRNAout.fa
+blastall -p blastn -i ${file}.ncRNAout.fa -d /public/home/jyli/Public_data/trRNA/All_tRNArRNAsnRNA.fa -e 0.001 -b 5 -v 5 -o ${file}.ncRNAout.trRNA.out
+php /public/home/jyli/scripts/blast.sta.simple.php ${file}.ncRNAout.trRNA.out
+grep  'NoHits' ${file}.ncRNAout.trRNA.out.sta |cut -f2 >${file}.ncRNAout.trRNA.id
+perl /public/home/jyli/scripts/getSeq_hash.pl -i ${file}.ncRNAout.trRNA.id -f ${file}.ncRNAout.fa -o ${file}.final.siRNA.fa
+done
+echo "End at:"
+date

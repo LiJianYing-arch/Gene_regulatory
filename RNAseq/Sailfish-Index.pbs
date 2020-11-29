@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -N Index
+#PBS -l nodes=1:ppn=15
+#PBS -o Index.out
+#PBS -e Index.err
+#PBS -q high
+echo---------`date`----------
+cd /public/home/jyli/Sailfish
+~/software/Sailfish-0.6.3-Linux_x86-64/bin/sailfish index -p 15 -t /public/home/jyli/Public_data/Gb_one_mRNA_cDNA.fa -o ./ -k 31 
+echo---------`date`---------
+

@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -N WT_Binorm
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=480:00:00
+#PBS -o parse_log
+#PBS -e errlog
+#PBS -q batch
+echo "Start at"
+date
+cd $PBS_O_WORKDIR
+   # split -l 10000000 ../Callus_2.txt
+    for id in `ls`
+    do
+        R --no-save --slave <../binom.test.new.R >${id}_result.txt --args $id
+        cat -n $id >${id}.raw
+	sed 's/"//g' ${id}_result.txt |awk '{OFS="\t"}{print $2,$3}' >${id}_result.txt.new
+        perl ../getEvalue.pl ${id}_result.txt.new ${id}.raw >${id}_parse.txt
+    done
+    cat *_parse.txt >../WT_MethyC_3depth_binorm.txt
+    cd ..
+   awk '{if ($3/($3+$4) >=0.25)print}' WT_MethyC_3depth_binorm.txt >WT_MethyC_3depth_binorm_0.25.txt
+echo "End at:"
+date

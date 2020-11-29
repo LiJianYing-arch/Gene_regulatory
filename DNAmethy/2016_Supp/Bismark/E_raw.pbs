@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -N E_Bismark
+#PBS -l nodes=1:ppn=15
+#PBS -o E.out
+#PBS -e E.err
+#PBS -l walltime=240:0:0
+#PBS -q batch
+cd /public/home/jyli/DNA_methy/2016_Supp/Bismark
+bismark /public/home/jyli/Public_data/TM-1_Genome/DNA_methy/ --bowtie2 --non_directional -N 1 -L 30 -p 15 -1 ../CleanData/E2_1.clean.fastq.gz -2 ../CleanData/E2_2.clean.fastq.gz -o E_Bismark
+
