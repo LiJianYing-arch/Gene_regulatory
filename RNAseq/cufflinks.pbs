@@ -1,9 +1,0 @@
-#!/bin/bash
-#PBS -N 63
-#PBS -l nodes=1:ppn=5
-#PBS -o 63.out
-#PBS -e 63.out
-#PBS -l walltime=240:0:0
-#PBS -q batch
-cd $PBS_O_WORKDIR
-cufflinks -p 5 -G /public/home/jyli/Public_data/TM-1_Genome/tm_1_v01c01.gene.gff3 -b /public/home/jyli/Public_data/TM-1_Genome/tm_1_v01c01.fa -u -o SRR1695160_expression ../Tophat/SRR1695160_mapping_Gh/accepted_hits.bam
